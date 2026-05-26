@@ -355,16 +355,19 @@
          config_ambientThresholdLevels. The brightening threshold is calculated as
          lux * (1.0f + CONSTRAINT_VALUE). When the current lux is higher than this threshold,
          the screen brightness is recalculated. See the config_ambientThresholdLevels
-         description for how the constraint value is chosen. -->
+         description for how the constraint value is chosen.
+         
+         Increased thresholds in low-light zones to reduce false triggers from
+         screen reflection while maintaining responsiveness in normal conditions -->
      <integer-array name="config_ambientBrighteningThresholds">
-        <item>2</item>
-        <item>6</item>
-        <item>10</item>
-        <item>30</item>
-        <item>100</item>
-        <item>400</item>
-        <item>600</item>
-        <item>1000</item>
+        <item>50</item>   <!-- 5% for very dark (0-2 lux) - raised from 0.2% to reduce screen reflection triggers -->
+        <item>30</item>   <!-- 3% for dark (2-10 lux) - raised from 0.6% -->
+        <item>10</item>   <!-- 1% for dim (10-30 lux) - unchanged -->
+        <item>30</item>   <!-- 3% for normal indoor (30-100 lux) - unchanged -->
+        <item>100</item>  <!-- 10% for bright indoor (100-800 lux) - unchanged -->
+        <item>400</item>  <!-- 40% for very bright (800-2000 lux) - unchanged -->
+        <item>600</item>  <!-- 60% for extremely bright (2000-4000 lux) - unchanged -->
+        <item>1000</item> <!-- 100% for outdoor (>4000 lux) - unchanged -->
     </integer-array>
 
     <!-- Array of hysteresis constraint values for darkening, represented as tenths of a
@@ -372,16 +375,19 @@
          config_ambientThresholdLevels. The darkening threshold is calculated as
          lux * (1.0f - CONSTRAINT_VALUE). When the current lux is lower than this threshold,
          the screen brightness is recalculated. See the config_ambientThresholdLevels
-         description for how the constraint value is chosen. -->
+         description for how the constraint value is chosen.
+         
+         Kept high thresholds in low-light zones to prevent rapid brightness drops
+         when screen content changes from white to black -->
     <integer-array name="config_ambientDarkeningThresholds">
-        <item>800</item>
-        <item>800</item>
-        <item>500</item>
-        <item>500</item>
-        <item>500</item>
-        <item>500</item>
-        <item>500</item>
-        <item>500</item>
+        <item>800</item>  <!-- 80% for very dark (0-2 lux) - unchanged, prevents flicker -->
+        <item>800</item>  <!-- 80% for dark (2-10 lux) - unchanged -->
+        <item>500</item>  <!-- 50% for dim (10-30 lux) - unchanged -->
+        <item>500</item>  <!-- 50% for normal indoor (30-100 lux) - unchanged -->
+        <item>500</item>  <!-- 50% for bright indoor (100-800 lux) - unchanged -->
+        <item>500</item>  <!-- 50% for very bright (800-2000 lux) - unchanged -->
+        <item>500</item>  <!-- 50% for extremely bright (2000-4000 lux) - unchanged -->
+        <item>500</item>  <!-- 50% for outdoor (>4000 lux) - unchanged -->
     </integer-array>
 
     <!-- Array of hysteresis constraint values for brightening, represented as tenths of a
@@ -404,6 +410,16 @@
         <item>0</item>
     </integer-array>
 
+     <!-- The default refresh rate for a given device. Change this value to set a higher default
+         refresh rate. If the hardware composer on the device supports display modes with a higher
+         refresh rate than the default value specified here, the framework may use those higher
+         refresh rate modes if an app chooses one by setting preferredDisplayModeId or calling
+         setFrameRate().
+         If a non-zero value is set for config_defaultPeakRefreshRate, then
+         config_defaultRefreshRate may be set to 0, in which case the value set for
+         config_defaultPeakRefreshRate will act as the default frame rate. -->
+    <integer name="config_defaultRefreshRateInZone">60</integer>
+
     <!-- The display uses different gamma curves for different refresh rates. It's hard for panel
          vendors to tune the curves to have exact same brightness for different refresh rate. So
          flicker could be observed at switch time. The issue is worse at the gamma lower end.
@@ -415,13 +431,13 @@
              || display brightness <= disp1 && ambient brightness <= amb1 -->
     <integer-array name="config_brightnessThresholdsOfPeakRefreshRate">
         <!-- System brightness for 10 nits: round((10-2)/(1000-2)*(255-1)+1) = 3 -->
-        <item>3</item> <!-- 20% UI brightness -->
+        <item>4</item> <!-- 20% UI brightness -->
         <!-- System brightness for 15 nits: round((15-2)/(1000-2)*(255-1)+1) = 4 -->
-        <item>4</item> <!-- 24% UI brightness -->
+        <item>6</item> <!-- 24% UI brightness -->
     </integer-array>
     <integer-array name="config_ambientThresholdsOfPeakRefreshRate">
         <item>-1</item>
-        <item>5</item>
+        <item>100</item>
     </integer-array>
 
     <!-- Stability requirements in milliseconds for accepting a new brightness level.  This is used
