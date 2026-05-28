@@ -64,9 +64,9 @@
          array. The brightness values must be non-negative and non-decreasing. This must be
          overridden in platform specific overlays -->
     <array name="config_autoBrightnessDisplayValuesNits">
-        <item>2.9</item>
-        <item>3.4</item>
-        <item>3.6</item>
+        <item>5.9</item>
+        <item>7.4</item>
+        <item>12.6</item>
         <item>17.0</item>
         <item>24.0</item>
         <item>31.0</item>
@@ -418,7 +418,7 @@
          If a non-zero value is set for config_defaultPeakRefreshRate, then
          config_defaultRefreshRate may be set to 0, in which case the value set for
          config_defaultPeakRefreshRate will act as the default frame rate. -->
-    <integer name="config_defaultRefreshRateInZone">60</integer>
+    <integer name="config_defaultRefreshRateInZone">120</integer>
 
     <!-- The display uses different gamma curves for different refresh rates. It's hard for panel
          vendors to tune the curves to have exact same brightness for different refresh rate. So
