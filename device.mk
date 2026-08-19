@@ -12,7 +12,7 @@ $(call inherit-product, device/xiaomi/sm8550-common/common.mk)
 $(call inherit-product, vendor/xiaomi/fuxi/fuxi-vendor.mk)
 
 # Camera MIUI
-$(call inherit-product-if-exists, vendor/xiaomi/camera/miuicamera.mk)
+$(call inherit-product-if-exists, device/xiaomi/fuxi-miuicamera/device.mk)
 
 # Audio
 PRODUCT_COPY_FILES += \
