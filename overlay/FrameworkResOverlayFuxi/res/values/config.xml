@@ -44,8 +44,13 @@
     <!-- Minimum screen brightness setting allowed by power manager.
          -2 is invalid so setting will resort to int value specified above.
          Set this to 0.0 to allow screen to go to minimal brightness.
-         The user is forbidden from setting the brightness below this level. -->
-    <item name="config_screenBrightnessSettingMinimumFloat" format="float" type="dimen">0.000854597</item>
+         The user is forbidden from setting the brightness below this level.
+
+         Raised to 5/255 = 0.0196 to lock the minimum brightness at 5,
+         matching the "Min brightness = 5" profile used in the brightness control app.
+         This prevents the screen from going below 5, while still allowing
+         auto-brightness to map higher lux values to higher brightness. -->
+    <item name="config_screenBrightnessSettingMinimumFloat" format="float" type="dimen">0.019607843</item>
 
     <!-- The maximum range of gamma adjustment possible using the screen
          auto-brightness adjustment setting. -->
@@ -63,18 +68,8 @@
          This array should have size one greater than the size of the config_autoBrightnessLevels
          array. The brightness values must be non-negative and non-decreasing. This must be
          overridden in platform specific overlays -->
-    <array name="config_autoBrightnessDisplayValuesNits">
+        <array name="config_autoBrightnessDisplayValuesNits">
         <item>5.9</item>
-        <item>7.4</item>
-        <item>12.6</item>
-        <item>17.0</item>
-        <item>24.0</item>
-        <item>31.0</item>
-        <item>34.0</item>
-        <item>46.0</item>
-        <item>59.0</item>
-        <item>76.0</item>
-        <item>81.0</item>
         <item>82.0</item>
         <item>82.0</item>
         <item>82.0</item>
@@ -181,7 +176,7 @@
          This must be overridden in platform specific overlays -->
     <integer-array name="config_autoBrightnessLcdBacklightValues" />
 
-    <!-- Array of light sensor lux values to define our levels for auto backlight brightness support.
+<!-- Array of light sensor lux values to define our levels for auto backlight brightness support.
          The N entries of this array define N + 1 control points as follows:
          (1-based arrays)
 
@@ -200,18 +195,15 @@
          Spline interpolation is used to determine the auto-brightness
          backlight values for lux levels between these control points.
 
-         Must be overridden in platform specific overlays -->
+         Must be overridden in platform specific overlays
+
+         MODIFIED: levels start at 35 instead of 1, and the first two
+         brightness values are equal (35 -> 5, next -> 5). This creates a
+         FLAT segment from 0-35 lux where brightness stays locked at the
+         minimum (5), matching the "35 lux below no adjustment" behavior
+         of the brightness control app. Above 35 lux the original curve
+         is preserved. -->
     <integer-array name="config_autoBrightnessLevels">
-        <item>1</item>
-        <item>2</item>
-        <item>4</item>
-        <item>6</item>
-        <item>8</item>
-        <item>10</item>
-        <item>15</item>
-        <item>20</item>
-        <item>25</item>
-        <item>30</item>
         <item>35</item>
         <item>40</item>
         <item>45</item>
@@ -341,9 +333,9 @@
          level[n] <= value < level[n+1]  n+1
          level[MAX] <= value             MAX+1 -->
     <integer-array name="config_ambientThresholdLevels">
-        <item>2</item>
         <item>10</item>
-        <item>30</item>
+        <item>20</item>
+        <item>45</item>
         <item>100</item>
         <item>800</item>
         <item>2000</item>
@@ -360,9 +352,9 @@
          Increased thresholds in low-light zones to reduce false triggers from
          screen reflection while maintaining responsiveness in normal conditions -->
      <integer-array name="config_ambientBrighteningThresholds">
-        <item>50</item>   <!-- 5% for very dark (0-2 lux) - raised from 0.2% to reduce screen reflection triggers -->
-        <item>30</item>   <!-- 3% for dark (2-10 lux) - raised from 0.6% -->
-        <item>10</item>   <!-- 1% for dim (10-30 lux) - unchanged -->
+        <item>5000</item>  <!-- 500% for very dark (0-10 lux) - effectively disable to eliminate reflection feedback -->
+        <item>4000</item>   <!-- 400% for dark (10-20 lux) - block most reflection triggers -->
+        <item>2000</item>   <!-- 200% for dim (20-45 lux) - filter reflection noise, keep responsiveness -->
         <item>30</item>   <!-- 3% for normal indoor (30-100 lux) - unchanged -->
         <item>100</item>  <!-- 10% for bright indoor (100-800 lux) - unchanged -->
         <item>400</item>  <!-- 40% for very bright (800-2000 lux) - unchanged -->
